@@ -3,17 +3,15 @@ package com.github.tifezh.kchart;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.github.tifezh.kchart.chart.KChartAdapter;
 import com.github.tifezh.kchart.chart.KLineEntity;
@@ -25,18 +23,12 @@ import com.github.tifezh.kchartlib.chart.formatter.DateFormatter;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 
 public class ExampleActivity extends AppCompatActivity {
 
-
-    @BindView(R.id.ll_status)
-    LinearLayout mLlStatus;
-    @BindView(R.id.kchart_view)
-    KChartView mKChartView;
     private KChartAdapter mAdapter;
+
+    private boolean isDarkMode = false;
 
     private ActivityExampleBinding binding;
     private ActivityExampleLightBinding bindingLight;
@@ -45,7 +37,9 @@ public class ExampleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int type = getIntent().getIntExtra("type", 0);
-        if (type == 0) {
+        isDarkMode = (type == 0);
+
+        if (isDarkMode) {
             //setContentView(R.layout.activity_example);
             // 深色模式
             binding = DataBindingUtil.setContentView(this, R.layout.activity_example);
@@ -67,12 +61,14 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        KChartView kChartView = isDarkMode ? binding.kchartView : bindingLight.kchartView;
+
         mAdapter = new KChartAdapter();
-        mKChartView.setAdapter(mAdapter);
-        mKChartView.setDateTimeFormatter(new DateFormatter());
-        mKChartView.setGridRows(4);
-        mKChartView.setGridColumns(4);
-        mKChartView.setOnSelectedChangedListener(new BaseKChartView.OnSelectedChangedListener() {
+        kChartView.setAdapter(mAdapter);
+        kChartView.setDateTimeFormatter(new DateFormatter());
+        kChartView.setGridRows(4);
+        kChartView.setGridColumns(4);
+        kChartView.setOnSelectedChangedListener(new BaseKChartView.OnSelectedChangedListener() {
             @Override
             public void onSelectedChanged(BaseKChartView view, Object point, int index) {
                 KLineEntity data = (KLineEntity) point;
@@ -82,7 +78,12 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        mKChartView.showLoading();
+        KChartView kChartView = isDarkMode ? binding.kchartView : bindingLight.kchartView;
+        TextView tvPrice = isDarkMode ? binding.tvPrice : bindingLight.tvPrice;
+        TextView tvPercent = isDarkMode ? binding.tvPercent : bindingLight.tvPercent;
+        LinearLayout llStatus = isDarkMode ? binding.llStatus : bindingLight.llStatus;
+
+        kChartView.showLoading();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -91,8 +92,8 @@ public class ExampleActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mAdapter.addFooterData(data);
-                        mKChartView.startAnimation();
-                        mKChartView.refreshEnd();
+                        kChartView.startAnimation();
+                        kChartView.refreshEnd();
                     }
                 });
             }
@@ -102,14 +103,18 @@ public class ExampleActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
+        KChartView kChartView = isDarkMode ? binding.kchartView : bindingLight.kchartView;
+        LinearLayout llStatus = isDarkMode ? binding.llStatus : bindingLight.llStatus;
+
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mLlStatus.setVisibility(View.GONE);
-            mKChartView.setGridRows(3);
-            mKChartView.setGridColumns(8);
+            llStatus.setVisibility(View.GONE);
+            kChartView.setGridRows(3);
+            kChartView.setGridColumns(8);
         } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mLlStatus.setVisibility(View.VISIBLE);
-            mKChartView.setGridRows(4);
-            mKChartView.setGridColumns(4);
+            llStatus.setVisibility(View.VISIBLE);
+            kChartView.setGridRows(4);
+            kChartView.setGridColumns(4);
         }
     }
 }

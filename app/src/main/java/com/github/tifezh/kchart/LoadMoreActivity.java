@@ -2,24 +2,21 @@ package com.github.tifezh.kchart;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.github.tifezh.kchart.chart.KChartAdapter;
 import com.github.tifezh.kchart.chart.KLineEntity;
+import com.github.tifezh.kchart.databinding.ActivityExampleLightBinding;
 import com.github.tifezh.kchartlib.chart.BaseKChartView;
 import com.github.tifezh.kchartlib.chart.KChartView;
 import com.github.tifezh.kchartlib.chart.formatter.DateFormatter;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by tifezh on 2017/7/3.
@@ -27,34 +24,32 @@ import butterknife.ButterKnife;
 
 public class LoadMoreActivity extends AppCompatActivity implements KChartView.KChartRefreshListener {
 
-    @BindView(R.id.title_view)
-    RelativeLayout mTitleView;
-    @BindView(R.id.tv_price)
-    TextView mTvPrice;
-    @BindView(R.id.tv_percent)
-    TextView mTvPercent;
-    @BindView(R.id.ll_status)
-    LinearLayout mLlStatus;
-    @BindView(R.id.kchart_view)
-    KChartView mKChartView;
+
     private KChartAdapter mAdapter;
+
+
+    private ActivityExampleLightBinding bindingLight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_example_light);
-        ButterKnife.bind(this);
+        //setContentView(R.layout.activity_example_light);
+        //ButterKnife.bind(this);
+        bindingLight = DataBindingUtil.setContentView(this, R.layout.activity_example_light);
+
         initView();
         initData();
     }
 
     private void initView() {
+        KChartView kChartView = bindingLight.kchartView;
+
         mAdapter = new KChartAdapter();
-        mKChartView.setAdapter(mAdapter);
-        mKChartView.setDateTimeFormatter(new DateFormatter());
-        mKChartView.setGridRows(4);
-        mKChartView.setGridColumns(4);
-        mKChartView.setOnSelectedChangedListener(new BaseKChartView.OnSelectedChangedListener() {
+        kChartView.setAdapter(mAdapter);
+        kChartView.setDateTimeFormatter(new DateFormatter());
+        kChartView.setGridRows(4);
+        kChartView.setGridColumns(4);
+        kChartView.setOnSelectedChangedListener(new BaseKChartView.OnSelectedChangedListener() {
             @Override
             public void onSelectedChanged(BaseKChartView view, Object point, int index) {
                 KLineEntity data = (KLineEntity) point;
@@ -64,27 +59,35 @@ public class LoadMoreActivity extends AppCompatActivity implements KChartView.KC
     }
 
     private void initData() {
-        mKChartView.showLoading();
-        mKChartView.setRefreshListener(this);
-        onLoadMoreBegin(mKChartView);
+        KChartView kChartView = bindingLight.kchartView;
+
+        kChartView.showLoading();
+        kChartView.setRefreshListener(this);
+        onLoadMoreBegin(kChartView);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
+        KChartView kChartView = bindingLight.kchartView;
+        LinearLayout llStatus =  bindingLight.llStatus;
+
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mLlStatus.setVisibility(View.GONE);
-            mKChartView.setGridRows(3);
-            mKChartView.setGridColumns(8);
+            llStatus.setVisibility(View.GONE);
+            kChartView.setGridRows(3);
+            kChartView.setGridColumns(8);
         } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mLlStatus.setVisibility(View.VISIBLE);
-            mKChartView.setGridRows(4);
-            mKChartView.setGridColumns(4);
+            llStatus.setVisibility(View.VISIBLE);
+            kChartView.setGridRows(4);
+            kChartView.setGridColumns(4);
         }
     }
 
     @Override
     public void onLoadMoreBegin(KChartView chart) {
+        KChartView kChartView = bindingLight.kchartView;
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -102,16 +105,16 @@ public class LoadMoreActivity extends AppCompatActivity implements KChartView.KC
                     public void run() {
                         //第一次加载时开始动画
                         if (mAdapter.getCount() == 0) {
-                            mKChartView.startAnimation();
+                            kChartView.startAnimation();
                         }
                         mAdapter.addFooterData(data);
                         //加载完成，还有更多数据
                         if (data.size() > 0) {
-                            mKChartView.refreshComplete();
+                            kChartView.refreshComplete();
                         }
                         //加载完成，没有更多数据
                         else {
-                            mKChartView.refreshEnd();
+                            kChartView.refreshEnd();
                         }
                     }
                 });

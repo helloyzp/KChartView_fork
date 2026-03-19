@@ -2,23 +2,21 @@ package com.github.tifezh.kchart;
 
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
 import com.github.tifezh.kchart.chart.MinuteLineEntity;
+import com.github.tifezh.kchart.databinding.ActivityMinuteChartBinding;
 import com.github.tifezh.kchartlib.chart.MinuteChartView;
 import com.github.tifezh.kchartlib.utils.DateUtil;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by tifezh on 2017/7/20.
@@ -27,25 +25,31 @@ import butterknife.ButterKnife;
 public class MinuteChartActivity extends AppCompatActivity {
 
 
-    @BindView(R.id.minuteChartView)
     MinuteChartView mMinuteChartView;
+
+    private ActivityMinuteChartBinding binding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_minute_chart);
+        //setContentView(R.layout.activity_minute_chart);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             window.setFlags(
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        ButterKnife.bind(this);
+       // ButterKnife.bind(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_minute_chart);
+
         initView();
         initData();
     }
 
     private void initView() {
+        mMinuteChartView = binding.minuteChartView;
+
+
     }
 
     private void initData() {
