@@ -3,7 +3,10 @@ package com.github.tifezh.kchart;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +17,8 @@ import android.widget.TextView;
 
 import com.github.tifezh.kchart.chart.KChartAdapter;
 import com.github.tifezh.kchart.chart.KLineEntity;
+import com.github.tifezh.kchart.databinding.ActivityExampleBinding;
+import com.github.tifezh.kchart.databinding.ActivityExampleLightBinding;
 import com.github.tifezh.kchartlib.chart.BaseKChartView;
 import com.github.tifezh.kchartlib.chart.KChartView;
 import com.github.tifezh.kchartlib.chart.formatter.DateFormatter;
@@ -23,27 +28,27 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+
 public class ExampleActivity extends AppCompatActivity {
 
 
-    @BindView(R.id.title_view)
-    RelativeLayout mTitleView;
-    @BindView(R.id.tv_price)
-    TextView mTvPrice;
-    @BindView(R.id.tv_percent)
-    TextView mTvPercent;
     @BindView(R.id.ll_status)
     LinearLayout mLlStatus;
     @BindView(R.id.kchart_view)
     KChartView mKChartView;
     private KChartAdapter mAdapter;
 
+    private ActivityExampleBinding binding;
+    private ActivityExampleLightBinding bindingLight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int type = getIntent().getIntExtra("type", 0);
         if (type == 0) {
-            setContentView(R.layout.activity_example);
+            //setContentView(R.layout.activity_example);
+            // 深色模式
+            binding = DataBindingUtil.setContentView(this, R.layout.activity_example);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 Window window = getWindow();
                 window.setFlags(
@@ -51,9 +56,12 @@ public class ExampleActivity extends AppCompatActivity {
                         WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             }
         } else {
-            setContentView(R.layout.activity_example_light);
+            //setContentView(R.layout.activity_example_light);
+            // 浅色模式
+            bindingLight = DataBindingUtil.setContentView(this, R.layout.activity_example_light);
         }
-        ButterKnife.bind(this);
+
+        //ButterKnife.bind(this);
         initView();
         initData();
     }
