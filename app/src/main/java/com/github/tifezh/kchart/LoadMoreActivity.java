@@ -34,7 +34,6 @@ public class LoadMoreActivity extends AppCompatActivity implements KChartView.KC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_example_light);
-        //ButterKnife.bind(this);
         bindingLight = DataBindingUtil.setContentView(this, R.layout.activity_example_light);
 
         initView();

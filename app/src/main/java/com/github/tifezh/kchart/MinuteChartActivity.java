@@ -39,7 +39,7 @@ public class MinuteChartActivity extends AppCompatActivity {
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-       // ButterKnife.bind(this);
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_minute_chart);
 
         initView();

@@ -55,7 +55,6 @@ public class ExampleActivity extends AppCompatActivity {
             bindingLight = DataBindingUtil.setContentView(this, R.layout.activity_example_light);
         }
 
-        //ButterKnife.bind(this);
         initView();
         initData();
     }
